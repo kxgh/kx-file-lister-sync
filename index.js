@@ -14,7 +14,7 @@ function getLogic(opts) {
             if (opts.details != 'all')
                 for (let d of opts.details)
                     o[d] = stat[d];
-            if (o.size && opts.sizeFormatter)
+            if (opts.sizeFormatter)
                 o.size = opts.sizeFormatter(o.size);
             return o
         },
