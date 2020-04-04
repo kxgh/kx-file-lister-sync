@@ -5,5 +5,9 @@
   "main": "index.js",
   "keywords": ["filelister"],
   "author": "github.com/kxgh",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kxgh/kx-file-lister-sync"
+  },
   "license": "ISC"
 }
