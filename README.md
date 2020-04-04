@@ -75,7 +75,7 @@ Defaults to `false`.
 
 Lists all files in directories and possibly subdirectories.
   * `dirPath` target directory path
-  * `recursive` also lists subdirectories if `true`. Defaults to `false`
+  * `recursive` also lists subdirectories if `true`. Defaults to `true`
   * `maxDepth` do not dive into subdirectories deeper than this number. 0 for just target directory, 1 for target directory
   and their direct subdirectories, `n`
 
@@ -92,6 +92,15 @@ Lists files into a deep array, mapping fs's tree structure.
   * `dirPath` target directory path
   * `maxDepth` do not dive into subdirectories deeper than this number
   
+## Which methods are recursive?
+
+| Method        | Recursive?    |
+| ------------- |:-------------:|
+| listFiles     | yes, settable |
+| listOneDir    | no            |
+| listFilesTree | yes           |
+
+  
 ## Examples
 
 Code:
@@ -103,7 +112,7 @@ const fl = new KFLS({
     sortByName: true,
     whiteList: [/m[ao]/,'.js']
 });
-const result = fl.listFiles('someDir')
+const result = fl.listFiles('someDir');
 console.log(result);
 ```
 
@@ -127,7 +136,7 @@ Code:
 ```javascript
 const KFLS = require('kx-file-lister-sync');
 const fl = new KFLS();
-const result = fl.listFilesTree('ourTarget')
+const result = fl.listFilesTree('ourTarget');
 console.log(result);
 ```
 
@@ -149,7 +158,7 @@ const fl = new KFLS({
     details: ['size', 'birthtime'],
     blackList: [/manifest/i]
 });
-const result = fl.listOneDir('ourTarget')
+const result = fl.listOneDir('ourTarget');
 console.log(result);
 ```
 

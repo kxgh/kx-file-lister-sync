@@ -89,7 +89,7 @@ function getLogic(opts) {
         },
         isDir(f) {
             if (typeof f === 'string')
-                return fs.statSync(f).isDirectory()
+                return fs.statSync(f).isDirectory();
             return !!f.dir
         },
         listTree(dirPath, maxDepth, depth) {
@@ -134,11 +134,11 @@ module.exports = class KFLS {
     /**
      * Lists all files in the directory and possibly subdirectories.
      * @param {string} dirPath path to the directory
-     * @param {boolean} [recursive=false] whether also the subdirectories should be listed
+     * @param {boolean} [recursive=true] whether also the subdirectories should be listed
      * @param {number} [maxDepth] do not dive into subdirectories deeper than maxDepth
      * @returns {null|string[]|Object[]} flat array of file names
      */
-    listFiles(dirPath, recursive, maxDepth = -1) {
+    listFiles(dirPath, recursive = true, maxDepth = -1) {
         dirPath = path.normalize(dirPath);
         maxDepth = parseInt(maxDepth);
         if (this._lg.isDir(dirPath) && !isNaN(maxDepth))
