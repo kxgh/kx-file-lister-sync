@@ -164,7 +164,6 @@ Code:
 ```javascript
 const FileLister = require('kx-file-lister-sync');
 const fl = new FileLister({
-    details: ['size', 'birthtime'],
     whiteList: [/manifest/i],
     detailed: true
 });
