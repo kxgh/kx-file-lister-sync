@@ -1,6 +1,6 @@
 {
   "name": "@kxghnpm/kx-file-lister-sync",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Simple synchronous file lister",
   "main": "index.js",
   "keywords": ["filelister"],
