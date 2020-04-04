@@ -1,7 +1,7 @@
-## kx-file-lister-sync
+# kx-file-lister-sync
 
-Content listing in directories using Node.js. Supporting recursion, detailed output, blacklists, whitelists, size formatters.
-Synchronous only.
+Content listing in directories using Node.js. Supporting recursion, stats, detailed output, blacklists, whitelists, size formatters.
+Fully synchronous.
 
 ## Example
 
@@ -9,14 +9,16 @@ Basic usage:
 
 ```javascript
 const fl = new (require('kx-file-lister-sync'))();
-const list = fl.listFiles('../some/folder', true); // true for RECURSIVE
+const list = fl.listFiles('../some/folder');
 console.log(list)
 ```
 Output:
 ```
 [ '..\\some\\backgorund.js',
   '..\\some\\manifest.js',
-  '..\\some\\docs\\cv.ods' ]
+  '..\\some\\docs\\cv.ods',
+  '..\\some\\docs\\photos\\pic.jpg',
+  '..\\some\\docs\\photos\\pic2.jpg' ]
 ```
 
 More examples at the bottom.
@@ -24,8 +26,8 @@ More examples at the bottom.
 ## API
 
 ```javascript
-const KFLS = require('kx-file-lister-sync');
-let fl = new KFLS(opts);
+const FileLister = require('kx-file-lister-sync');
+let fl = new FileLister(opts);
 ```
 
 ### Constructor
@@ -38,42 +40,51 @@ Object opts is passed to contructor. It accepts these properties:
 
 #### detailed
 
-If set to `true` it will list objects with properties listed in `details` params. `false` for plain string filepaths.
-Defaults to `false`
+If set to `true` it will list objects with properties
+`name` for file name,
+`path` for file path
+`full` for full file path,
+`ext` for extension and
+`dir` for whether it is a directory.
+Otherwise it returns plain string filepaths. Defaults to `false`
 
-#### details
+#### stats
 
-Either `'all'` or an array of strings. Each string represents which detail will be returned along with full path, path and file name.
-These 3 properties are always present. Refer to stat function of 'fs' module for more options. Defaults to `['size']`
+Enables detailed mode and each item will also include fs stats. Contains single err property, if could not stat.
+Defaults to `false`.
 
 #### blackList
 
-Array of strings or `RegExp`s, or both. Each file will be checked by each blackList entry if it matches it will not be listed.
-Matching is done by `String.prototype.endsWith` function, while regexps are checked by `RegExp.prototype.test`.
-Only works if whiteList is empty or null. Defaults to `[]`
+Array of strings or `RegExp`s, or both. Each (non-dir) file will be checked by each blackList entry if it matches it will not be listed.
+Matching is done by `String.prototype.endsWith` function on file's name, while regexps are checked by `RegExp.prototype.test`.
+Only works if whiteList is empty or missing. Defaults to `[]`
 
 #### whiteList
 
 Does the opposite of what blackList does. If whiteList is specified and has at least one element, all listings ignore blackList
 and use whiteList instead. Empty by default.
 
+#### filterDirs
+
+White and black lists also affect diving into directories if set to `true`. Defaults to `false`.
+
 #### sizeFormatter
 
 Value of this property must be a function and should take one `Number` param (file size in bytes) and output anything.
 Decorator for file size.
-
-#### showHidden
-
-Does not output entries that start with period. Defaults to `false`.
 
 #### sortByName
 
 Whether to sort output entries by name. If set to `false` (default) it will sort output entries by 'directories first'.
 Defaults to `false`.
 
+#### ignoreLinks
+
+Output will not contain files that are symbolic links. Defaults to `true`.
+
 ### listFiles(dirPath[, recursive, maxDepth])
 
-Lists all files in directories and possibly subdirectories.
+Lists all files in directories and possibly subdirectories into a single flat array.
   * `dirPath` target directory path
   * `recursive` also lists subdirectories if `true`. Defaults to `true`
   * `maxDepth` do not dive into subdirectories deeper than this number. 0 for just target directory, 1 for target directory
@@ -81,7 +92,7 @@ Lists all files in directories and possibly subdirectories.
 
 ### listOneDir(dirPath)
 
-Lists files AND DIRECTORIES in target directory.
+Lists files **and directories** in target directory.
 
   * `dirPath` target directory path
 
@@ -94,11 +105,11 @@ Lists files into a deep array, mapping fs's tree structure.
   
 ## Which methods are recursive?
 
-| Method        | Recursive?    |
-| ------------- |:-------------:|
-| listFiles     | yes, settable |
-| listOneDir    | no            |
-| listFilesTree | yes           |
+| Method        | Recursive?    | Lists dirs?   |
+| ------------- |:-------------:|:-------------:|
+| listFiles     | yes, settable | no            |
+| listOneDir    | no            | yes           |
+| listFilesTree | yes           | as a structure|
 
   
 ## Examples
@@ -106,75 +117,74 @@ Lists files into a deep array, mapping fs's tree structure.
 Code:
 
 ```javascript
-const KFLS = require('kx-file-lister-sync');
-const fl = new KFLS({
+const FileLister = require('kx-file-lister-sync');
+const fl = new FileLister({
     detailed: true,
     sortByName: true,
     whiteList: [/m[ao]/,'.js']
 });
-const result = fl.listFiles('someDir');
+const result = fl.listFiles('xx/some');
 console.log(result);
 ```
 
 Outputs to:
 ```
-[ { dir: false,
-    name: 'backgorund.js',
-    path: 'someDir\\4money.js',
-    full: 'C:\\Users\\kxgh\\projs\\some\\backgorund.js',
-    size: 4096 },
-  { dir: false,
-    name: 'manifest.js',
-    path: 'someDir\\manifest.js',
-    full: 'C:\\Users\\kxgh\\projs\\some\\manifest.js',
-    size: 546861 } ]
+[ { name: 'backgorund.js',
+    path: 'xx\\some\\backgorund.js',
+    dir: false,
+    ext: '.js',
+    full:
+     'C:\\Users\\kxgh\\projs\\kx-file-lister-sync\\xx\\some\\backgorund.js' },
+  { name: 'manifest.js',
+    path: 'xx\\some\\manifest.js',
+    dir: false,
+    ext: '.js',
+    full:
+     'C:\\Users\\kxgh\\projs\\kx-file-lister-sync\\xx\\some\\manifest.js' } ]
 ```
 ---
 
 Code:
 
 ```javascript
-const KFLS = require('kx-file-lister-sync');
-const fl = new KFLS();
-const result = fl.listFilesTree('ourTarget');
+const FileLister = require('kx-file-lister-sync');
+const fl = new FileLister({blackList: ['some'], filterDirs: true});
+const result = fl.listFilesTree('xx');
 console.log(result);
 ```
 
 Outputs to:
 ```
-[ [ [ 'ourTarget\\docs\\photos\\pic.jpg',
-      'ourTarget\\docs\\photos\\pic2.jpg' ],
-    'ourTarget\\docs\\cv.ods' ],
-  'ourTarget\\backgorund.js',
-  'ourTarget\\manifest.js' ]
+[ [ [ 'xx\\xy\\xz\\ac.js' ], 'xx\\xy\\ab.js' ], 'xx\\aa.js' ]
 ```
 ---
 
 Code:
 
 ```javascript
-const KFLS = require('kx-file-lister-sync');
-const fl = new KFLS({
+const FileLister = require('kx-file-lister-sync');
+const fl = new FileLister({
     details: ['size', 'birthtime'],
-    blackList: [/manifest/i]
+    whiteList: [/manifest/i],
+    detailed: true
 });
-const result = fl.listOneDir('ourTarget');
+const result = fl.listOneDir('xx/some');
 console.log(result);
 ```
 
 Outputs to:
 
 ```
-[ { dir: true,
-    name: 'docs',
-    path: 'ourTarget\\docs',
-    full: 'C:\\Users\\kxgh\\projs\\ourTarget\\docs',
-    size: 0,
-    birthtime: 2020-04-03T18:37:02.426Z },
-  { dir: false,
-    name: 'backgorund.js',
-    path: 'ourTarget\\backgorund.js',
-    full: 'C:\\Users\\kxgh\\projs\\ourTarget\\backgorund.js',
-    size: 2224,
-    birthtime: 2020-04-03T18:36:40.349Z } ]
+[ { name: 'docs',
+    path: 'xx\\some\\docs',
+    dir: true,
+    ext: '',
+    full:
+     'C:\\Users\\kxgh\\projs\\kx-file-lister-sync\\xx\\some\\docs' },
+  { name: 'manifest.js',
+    path: 'xx\\some\\manifest.js',
+    dir: false,
+    ext: '.js',
+    full:
+     'C:\\Users\\kxgh\\projs\\kx-file-lister-sync\\xx\\some\\manifest.js' } ]
 ```
