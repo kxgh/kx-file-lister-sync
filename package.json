@@ -1,5 +1,5 @@
 {
-  "name": "kx-file-lister-sync",
+  "name": "@kxghnpm/kx-file-lister-sync",
   "version": "1.0.0",
   "description": "Simple synchronous file lister",
   "main": "index.js",
