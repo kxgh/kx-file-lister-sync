@@ -8,7 +8,7 @@ Fully synchronous.
 Basic usage:
 
 ```javascript
-const fl = new (require('kx-file-lister-sync'))();
+const fl = new (require('@kxghnpm/kx-file-lister-sync'))();
 const list = fl.listFiles('../some/folder');
 console.log(list)
 ```
@@ -26,7 +26,7 @@ More examples at the bottom.
 ## API
 
 ```javascript
-const FileLister = require('kx-file-lister-sync');
+const FileLister = require('@kxghnpm/kx-file-lister-sync');
 let fl = new FileLister(opts);
 ```
 
@@ -117,7 +117,7 @@ Lists files into a deep array, mapping fs's tree structure.
 Code:
 
 ```javascript
-const FileLister = require('kx-file-lister-sync');
+const FileLister = require('@kxghnpm/kx-file-lister-sync');
 const fl = new FileLister({
     detailed: true,
     sortByName: true,
@@ -147,7 +147,7 @@ Outputs to:
 Code:
 
 ```javascript
-const FileLister = require('kx-file-lister-sync');
+const FileLister = require('@kxghnpm/kx-file-lister-sync');
 const fl = new FileLister({blackList: ['some'], filterDirs: true});
 const result = fl.listFilesTree('xx');
 console.log(result);
@@ -162,7 +162,7 @@ Outputs to:
 Code:
 
 ```javascript
-const FileLister = require('kx-file-lister-sync');
+const FileLister = require('@kxghnpm/kx-file-lister-sync');
 const fl = new FileLister({
     whiteList: [/manifest/i],
     detailed: true
