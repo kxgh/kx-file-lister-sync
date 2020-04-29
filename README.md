@@ -14,11 +14,11 @@ console.log(list)
 ```
 Output:
 ```
-[ '..\\some\\backgorund.js',
-  '..\\some\\manifest.js',
-  '..\\some\\docs\\cv.ods',
-  '..\\some\\docs\\photos\\pic.jpg',
-  '..\\some\\docs\\photos\\pic2.jpg' ]
+[ '..\\some\\folder\\backgorund.js',
+  '..\\some\\folder\\manifest.js',
+  '..\\some\\folder\\docs\\cv.ods',
+  '..\\some\\folder\\docs\\photos\\pic.jpg',
+  '..\\some\\folder\\docs\\photos\\pic2.jpg' ]
 ```
 
 More examples at the bottom.
@@ -149,13 +149,13 @@ Code:
 ```javascript
 const FileLister = require('@kxghnpm/kx-file-lister-sync');
 const fl = new FileLister({blackList: ['some'], filterDirs: true});
-const result = fl.listFilesTree('xx');
+const result = fl.listFilesTree('myFolder');
 console.log(result);
 ```
 
 Outputs to:
 ```
-[ [ [ 'xx\\xy\\xz\\ac.js' ], 'xx\\xy\\ab.js' ], 'xx\\aa.js' ]
+[ [ [ 'myFolder\\xy\\xz\\ac.js' ], 'myFolder\\xy\\ab.js' ], 'myFolder\\aa.js' ]
 ```
 ---
 
